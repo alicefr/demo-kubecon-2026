@@ -1,0 +1,51 @@
+image := "localhost/fcos-k3s"
+base := "quay.io/trusted-execution-clusters/fedora-coreos@sha256:372a5db90a8695fafc2869d438bacd7f0ef7fd84f63746a450bfcd4b8b64ae83"
+archive := "fcos.ociarchive"
+
+build:
+    sudo podman build --network=host --no-cache --build-arg BASE={{base}} -t {{image}} -f Containerfile .
+
+oci-archive:
+    sudo skopeo copy containers-storage:{{image}} oci-archive:{{archive}}
+
+cosa_function := '''
+    #!/usr/bin/env bash
+    cosa() {
+        env | grep COREOS_ASSEMBLER || true
+
+        # Default container image
+        COREOS_ASSEMBLER_CONTAINER_LATEST="quay.io/coreos-assembler/coreos-assembler:latest"
+        sudo podman pull $COREOS_ASSEMBLER_CONTAINER_LATEST
+
+        set -ex
+        sudo podman run --rm -ti --security-opt=label=disable --privileged -u 0 \
+				--network host \
+            -v=${PWD}:/srv/ --device=/dev/kvm --device=/dev/fuse \
+            --tmpfs=/tmp -v=/var/tmp:/var/tmp --name=cosa \
+            ${COREOS_ASSEMBLER_CONFIG_GIT:+-v=$COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro} \
+            ${COREOS_ASSEMBLER_GIT:+-v=$COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro} \
+            ${COREOS_ASSEMBLER_ADD_CERTS:+-v=/etc/pki/ca-trust:/etc/pki/ca-trust:ro} \
+            ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS} \
+            ${COREOS_ASSEMBLER_CONTAINER:-$COREOS_ASSEMBLER_CONTAINER_LATEST} "$@"
+    }
+'''
+
+kubevirt:
+    #!/usr/bin/env bash
+    {{cosa_function}}
+    rm -rf cache
+    mkdir -p cache
+    cp {{archive}} cache/{{archive}}
+    cd cache
+    cosa init --force https://github.com/coreos/fedora-coreos-config
+    cosa import oci-archive:/srv/{{archive}}
+    cosa osbuild kubevirt
+
+qemu:
+    #!/usr/bin/env bash
+    {{cosa_function}}
+    rm -rf cache
+    mkdir -p cache
+    cosa init --force https://github.com/coreos/fedora-coreos-config
+    cosa import oci-archive:/srv/{{archive}}
+    cosa osbuild qemu

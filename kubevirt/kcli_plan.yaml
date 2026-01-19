@@ -1,0 +1,6 @@
+name: k3s-vm
+k3s-vm:
+  name: k3s-vm
+  image: builds/latest/x86_64/fedora-coreos-43.20251120.3.0-qemu.x86_64.qcow2
+  net: default
+  memory: 4096

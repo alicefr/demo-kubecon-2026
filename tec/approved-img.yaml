@@ -1,0 +1,7 @@
+apiVersion: trusted-execution-clusters.io/v1alpha1
+kind: ApprovedImage
+metadata:
+  name: demo
+  namespace: trusted-execution-clusters
+spec:
+  image: quay.io/fedora/fedora-coreos@sha256:372a5db90a8695fafc2869d438bacd7f0ef7fd84f63746a450bfcd4b8b64ae83

@@ -1,0 +1,37 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: demovm
+spec:
+  runStrategy: Always
+  template:
+    metadata:
+    spec:
+      domain:
+        features:
+          smm:
+            enabled: true
+        firmware:
+          bootloader:
+            efi:
+              persistent: true
+        devices:
+          tpm:
+            persistent: true
+          disks:
+          - name: containerdisk
+            disk:
+              bus: virtio
+          rng: {}
+        resources:
+          requests:
+            memory: 4096M
+      volumes:
+      - name: containerdisk
+        containerDisk:
+          image: "quay.io/afrosi_rh/fedora-coreos-kubevirt:demo"
+          imagePullPolicy: Always
+      - name: cloudinitdisk
+        cloudInitConfigDrive:
+          secretRef:
+            name: vm-ign

@@ -1,0 +1,7 @@
+FROM nginx:alpine
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY .htpasswd /etc/nginx/conf.d/.htpasswd
+COPY html/ /usr/share/nginx/html/
+
+CMD ["nginx-debug",  "-g", "master_process off; daemon off;"]
