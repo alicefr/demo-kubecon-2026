@@ -1,5 +1,16 @@
 variant: fcos
-version: 1.6.0
+version: 1.7.0-experimental
+
+ignition:
+  config:
+    merge:
+      - source: "http://register-server.trusted-execution-clusters.svc.cluster.local:8000/ignition-clevis-pin-trustee"
+
+attestation:
+  attestation_key:
+    registration:
+      url: "http://attestation-key-register.trusted-execution-clusters.svc.cluster.local:8001/register-ak"
+
 passwd:
   users:
     - name: root
