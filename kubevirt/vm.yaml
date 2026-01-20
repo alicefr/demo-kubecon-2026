@@ -34,4 +34,4 @@ spec:
       - name: cloudinitdisk
         cloudInitConfigDrive:
           secretRef:
-            name: vm-ign
+            name: vm-ign-conf
