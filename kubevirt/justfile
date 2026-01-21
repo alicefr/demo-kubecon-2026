@@ -1,6 +1,7 @@
 image := "localhost/fcos-k3s"
-base := "quay.io/trusted-execution-clusters/fedora-coreos@sha256:372a5db90a8695fafc2869d438bacd7f0ef7fd84f63746a450bfcd4b8b64ae83"
+base := "quay.io/trusted-execution-clusters/fcos:latest"
 archive := "fcos.ociarchive"
+kv-image := "quay.io/afrosi_rh/fedora-coreos-kubevirt:demo"
 
 build:
     sudo podman build --network=host --no-cache --build-arg BASE={{base}} -t {{image}} -f Containerfile .
@@ -49,3 +50,10 @@ qemu:
     cosa init --force https://github.com/coreos/fedora-coreos-config
     cosa import oci-archive:/srv/{{archive}}
     cosa osbuild qemu
+
+push-kubevirt:
+	#!/usr/bin/env bash
+	image=$(ls cache/builds/latest/x86_64/fedora-coreos-*-kubevirt.x86_64.ociarchive)
+	skopeo copy oci-archive:$image containers-storage:{{kv-image}}
+	echo "Pushing image {{kv-image}}"
+	podman push {{kv-image}}
