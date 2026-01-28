@@ -1,6 +1,8 @@
 #!/bin/bash
 
-virtctl expose virtualmachine demovm \
+
+VM=$1
+virtctl expose virtualmachine $VM \
   --name app-api \
   --port 30080 \
   --target-port 30080 \
