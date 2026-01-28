@@ -1,2 +1,3 @@
 kubevirt/cache/
 kubevirt/fcos.ociarchive
+kubevirt/k3s-kubeconfig.yaml

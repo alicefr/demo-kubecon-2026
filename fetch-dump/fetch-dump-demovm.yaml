@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dump-demovm
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      name: dump-demovm
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: dump
+          image: quay.io/afrosi_rh/fetch-dumps:kubecon2026
+          volumeMounts:
+            - name: dump-storage
+              mountPath: /data
+      volumes:
+        - name: dump-storage
+          persistentVolumeClaim:
+            claimName: demovm-dump

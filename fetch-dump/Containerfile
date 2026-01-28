@@ -1,0 +1,6 @@
+FROM fedora:43
+
+COPY ./entrypoint.sh /entrypoint.sh
+RUN dnf install -y binutils && dnf clean all
+
+ENTRYPOINT ["/entrypoint.sh"]

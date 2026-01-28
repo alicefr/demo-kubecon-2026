@@ -1,5 +1,5 @@
 image := "localhost/fcos-k3s"
-base := "quay.io/trusted-execution-clusters/fedora-coreos@sha256:6997f51fd27d1be1b5fc2e6cc3ebf16c17eb94d819b5d44ea8d6cf5f826ee773"
+base := "quay.io/afrosi_rh/fedora-coreos@sha256:66f22c3166bd69d50dc1b2542a18ada9489f0a3898af3fad6ae19f6ad4775a6a"
 archive := "fcos.ociarchive"
 kv-image := "quay.io/afrosi_rh/fedora-coreos-kubevirt:demo"
 
